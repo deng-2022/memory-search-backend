@@ -39,7 +39,7 @@ public class PictureController {
         int pageSize = pictureQueryRequest.getPageSize();
         String searchText = pictureQueryRequest.getSearchText();
 
-        Page<Picture> picturePage = pictureService.searchPicture(searchText, pageSize, currentPage);
+        Page<Picture> picturePage = pictureService.listPictureVOByPage(searchText, pageSize, currentPage);
         return ResultUtils.success(picturePage);
     }
 }

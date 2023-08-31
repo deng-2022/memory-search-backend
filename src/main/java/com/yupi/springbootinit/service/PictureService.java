@@ -11,5 +11,5 @@ import java.io.IOException;
  */
 public interface PictureService {
 
-    Page<Picture> searchPicture(String searchText, int pageSize, int currentPage) throws IOException;
+    Page<Picture> listPictureVOByPage(String searchText, long pageSize, long currentPage) throws IOException;
 }

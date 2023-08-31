@@ -12,7 +12,6 @@ import lombok.Data;
  */
 @Data
 public class UserVO implements Serializable {
-
     /**
      * id
      */

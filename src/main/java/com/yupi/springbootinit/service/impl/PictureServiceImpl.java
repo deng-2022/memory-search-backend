@@ -1,6 +1,7 @@
 package com.yupi.springbootinit.service.impl;
 
 import cn.hutool.json.JSONUtil;
+import com.alibaba.excel.util.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yupi.springbootinit.model.entity.Picture;
 import com.yupi.springbootinit.service.PictureService;
@@ -11,6 +12,7 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +34,12 @@ public class PictureServiceImpl implements PictureService {
      * @param currentPage 当前页
      */
     @Override
-    public Page<Picture> searchPicture(String searchText, int pageSize, int currentPage) throws IOException {
-        int current = currentPage - 1;
+    public Page<Picture> listPictureVOByPage(String searchText, long pageSize, long currentPage) throws IOException {
+        long current = currentPage - 1;
+        // 非空条件，转码
+        if (StringUtils.isNotBlank(searchText)) {
+            searchText = URLEncoder.encode(searchText, "UTF-8");
+        }
         String url = String.format("https://cn.bing.com/images/search?q=%s&first=%s", searchText, current);
         Document doc = Jsoup.connect(url).get();
         Elements elements = doc.select(".iuscp.isv");

@@ -17,7 +17,6 @@ import java.util.Map;
  */
 @Component
 public class DataSourceRegistry {
-
     @Resource
     private PostDataSource postDataSource;
 

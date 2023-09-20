@@ -4,11 +4,14 @@ import com.yupi.springbootinit.model.dto.post.PostEsDTO;
 import com.yupi.springbootinit.model.dto.post.PostQueryRequest;
 import com.yupi.springbootinit.model.entity.Post;
 import com.yupi.springbootinit.service.PostService;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Resource;
+
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -23,7 +26,6 @@ import org.springframework.data.domain.Sort;
  */
 @SpringBootTest
 public class PostEsDaoTest {
-
     @Resource
     private PostEsDao postEsDao;
 
@@ -50,7 +52,7 @@ public class PostEsDaoTest {
     @Test
     void testAdd() {
         PostEsDTO postEsDTO = new PostEsDTO();
-        postEsDTO.setId(1L);
+        postEsDTO.setId(5L);
         postEsDTO.setTitle("test");
         postEsDTO.setContent("test");
         postEsDTO.setTags(Arrays.asList("java", "python"));
@@ -62,6 +64,7 @@ public class PostEsDaoTest {
         postEsDTO.setIsDelete(0);
         postEsDao.save(postEsDTO);
         System.out.println(postEsDTO.getId());
+
     }
 
     @Test

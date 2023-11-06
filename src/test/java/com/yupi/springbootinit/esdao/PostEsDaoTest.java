@@ -32,21 +32,21 @@ public class PostEsDaoTest {
     @Resource
     private PostService postService;
 
-    @Test
-    void test() {
-        PostQueryRequest postQueryRequest = new PostQueryRequest();
-        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Post> page =
-                postService.searchFromEs(postQueryRequest);
-        System.out.println(page);
-    }
+//    @Test
+//    void test() {
+//        PostQueryRequest postQueryRequest = new PostQueryRequest();
+//        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Post> page =
+//                postService.searchFromEs(postQueryRequest);
+//        System.out.println(page);
+//    }
 
     @Test
     void testSelect() {
         System.out.println(postEsDao.count());
         Page<PostEsDTO> PostPage = postEsDao.findAll(
                 PageRequest.of(0, 5, Sort.by("createTime")));
-        List<PostEsDTO> postList = PostPage.getContent();
-        System.out.println(postList);
+        List<PostEsDTO> articleList = PostPage.getContent();
+        System.out.println(articleList);
     }
 
     @Test

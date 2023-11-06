@@ -76,7 +76,7 @@ public class PostFavourController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User loginUser = userService.getLoginUser(request);
-        long current = postQueryRequest.getCurrent();
+        long current = postQueryRequest.getPageNum();
         long size = postQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
@@ -97,7 +97,7 @@ public class PostFavourController {
         if (postFavourQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        long current = postFavourQueryRequest.getCurrent();
+        long current = postFavourQueryRequest.getPageNum();
         long size = postFavourQueryRequest.getPageSize();
         Long userId = postFavourQueryRequest.getUserId();
         // 限制爬虫

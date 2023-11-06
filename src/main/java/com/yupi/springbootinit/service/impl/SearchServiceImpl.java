@@ -7,6 +7,7 @@ import com.yupi.springbootinit.exception.ThrowUtils;
 import com.yupi.springbootinit.model.dto.post.PostQueryRequest;
 import com.yupi.springbootinit.model.dto.search.SearchQueryRequest;
 import com.yupi.springbootinit.model.dto.user.UserQueryRequest;
+import com.yupi.springbootinit.model.entity.Article;
 import com.yupi.springbootinit.model.entity.Picture;
 import com.yupi.springbootinit.model.entity.User;
 import com.yupi.springbootinit.model.enums.SearchTypeEnum;
@@ -40,6 +41,8 @@ public class SearchServiceImpl implements SearchService {
     @Resource
     private PictureDataSource pictureDataSource;
     @Resource
+    private ArticleDataSource articleDataSource;
+    @Resource
     private DataSourceRegistry dataSourceRegistry;
 
     @Override
@@ -54,7 +57,7 @@ public class SearchServiceImpl implements SearchService {
 
         String searchText = searchQueryRequest.getSearchText();
         long pageSize = searchQueryRequest.getPageSize();
-        long current = searchQueryRequest.getCurrent();
+        long current = searchQueryRequest.getPageNum();
 
         // 2.执行查询全部数据
         SearchVO searchVO = null;
@@ -72,17 +75,24 @@ public class SearchServiceImpl implements SearchService {
             CompletableFuture<Page<Picture>> pictureTask = CompletableFuture.supplyAsync(() ->
                     pictureDataSource.search(searchText, pageSize, current));
 
-            CompletableFuture.allOf(userTask, postTask, pictureTask).join();
+            // 获取博文
+            CompletableFuture<Page<Article>> articleTask = CompletableFuture.supplyAsync(() ->
+                    articleDataSource.search(searchText, pageSize, current));
+
+            CompletableFuture.allOf(userTask, postTask, pictureTask, articleTask).join();
 
             try {
                 Page<PostVO> postVOPage = postTask.get();
                 Page<User> userPage = userTask.get();
                 Page<Picture> picturePage = pictureTask.get();
+                Page<Article> articlePage = articleTask.get();
 
                 searchVO = new SearchVO();
                 searchVO.setUserList(userPage.getRecords());
-                searchVO.setPostList(postVOPage.getRecords());
+                searchVO.setPostVOList(postVOPage.getRecords());
                 searchVO.setPictureList(picturePage.getRecords());
+                searchVO.setArticleList(articlePage.getRecords());
+
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }

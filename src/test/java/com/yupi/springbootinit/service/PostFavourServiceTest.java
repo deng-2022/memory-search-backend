@@ -130,7 +130,7 @@ class PostFavourServiceTest {
         Map<String, Object> map = JSONUtil.toBean(result, Map.class);
         JSONObject data = (JSONObject) map.get("data");
         JSONArray records = (JSONArray) data.get("records");
-        List<Post> postList = new ArrayList<>();
+        List<Post> articleList = new ArrayList<>();
         for (Object record : records) {
             JSONObject tempRecord = (JSONObject) record;
             Post post = new Post();
@@ -140,11 +140,11 @@ class PostFavourServiceTest {
             List<String> tagList = tags.toList(String.class);
             post.setTags(JSONUtil.toJsonStr(tagList));
             post.setUserId(1L);
-            postList.add(post);
+            articleList.add(post);
         }
-//        System.out.println(postList);
+//        System.out.println(articleList);
         // 3. 数据入库
-        boolean b = postService.saveBatch(postList);
+        boolean b = postService.saveBatch(articleList);
         Assertions.assertTrue(b);
     }
 }

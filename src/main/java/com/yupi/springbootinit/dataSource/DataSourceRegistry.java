@@ -26,6 +26,9 @@ public class DataSourceRegistry {
     @Resource
     private PictureDataSource pictureDataSource;
 
+    @Resource
+    private ArticleDataSource articleDataSource;
+
     private Map<String, DataSource<T>> typeDataSourceMap;
 
     @PostConstruct
@@ -35,6 +38,7 @@ public class DataSourceRegistry {
             put(SearchTypeEnum.POST.getValue(), postDataSource);
             put(SearchTypeEnum.USER.getValue(), userDataSource);
             put(SearchTypeEnum.PICTURE.getValue(), pictureDataSource);
+            put(SearchTypeEnum.Article.getValue(), articleDataSource);
         }};
     }
 

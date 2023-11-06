@@ -1,5 +1,6 @@
 package com.yupi.springbootinit.model.vo;
 
+import com.yupi.springbootinit.model.entity.Article;
 import com.yupi.springbootinit.model.entity.Picture;
 import com.yupi.springbootinit.model.entity.User;
 import lombok.Data;
@@ -17,7 +18,9 @@ import java.util.List;
 public class SearchVO implements Serializable {
     private List<User> userList;
 
-    private List<PostVO> postList;
+    private List<Article> articleList;
+
+    private List<PostVO> postVOList;
 
     private List<Picture> pictureList;
 

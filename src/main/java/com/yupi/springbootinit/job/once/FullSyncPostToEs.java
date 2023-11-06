@@ -30,11 +30,11 @@ public class FullSyncPostToEs implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        List<Post> postList = postService.list();
-        if (CollectionUtils.isEmpty(postList)) {
+        List<Post> articleList = postService.list();
+        if (CollectionUtils.isEmpty(articleList)) {
             return;
         }
-        List<PostEsDTO> postEsDTOList = postList.stream().map(PostEsDTO::objToDto).collect(Collectors.toList());
+        List<PostEsDTO> postEsDTOList = articleList.stream().map(PostEsDTO::objToDto).collect(Collectors.toList());
         final int pageSize = 500;
         int total = postEsDTOList.size();
         log.info("FullSyncPostToEs start, total {}", total);

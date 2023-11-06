@@ -32,7 +32,7 @@ public class UserDataSource implements DataSource<User> {
 
         userQueryRequest.setUserName(searText);
         userQueryRequest.setPageSize(pageSize);
-        userQueryRequest.setCurrent(current);
+        userQueryRequest.setPageNum(current);
 
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = servletRequestAttributes.getRequest();

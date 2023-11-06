@@ -163,7 +163,7 @@ public class PostController {
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<PostVO>> listPostVOByPage(@RequestBody PostQueryRequest postQueryRequest,
                                                        HttpServletRequest request) {
-        long current = postQueryRequest.getCurrent();
+        long current = postQueryRequest.getPageNum();
         long size = postQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
@@ -187,7 +187,7 @@ public class PostController {
         }
         User loginUser = userService.getLoginUser(request);
         postQueryRequest.setUserId(loginUser.getId());
-        long current = postQueryRequest.getCurrent();
+        long current = postQueryRequest.getPageNum();
         long size = postQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);

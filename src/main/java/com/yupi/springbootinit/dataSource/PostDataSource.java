@@ -2,6 +2,7 @@ package com.yupi.springbootinit.dataSource;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yupi.springbootinit.model.dto.post.PostQueryRequest;
+import com.yupi.springbootinit.model.entity.Post;
 import com.yupi.springbootinit.model.vo.PostVO;
 import com.yupi.springbootinit.service.PostService;
 import org.springframework.stereotype.Service;
@@ -32,10 +33,10 @@ public class PostDataSource implements DataSource<PostVO> {
 
         postQueryRequest.setSearchText(searText);
         postQueryRequest.setPageSize(pageSize);
-        postQueryRequest.setCurrent(current);
+        postQueryRequest.setPageNum(current);
 
-        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = servletRequestAttributes.getRequest();
-        return postService.listPostVOByPage(postQueryRequest, request);
+        Page<Post> postPage = postService.searchFromEs(postQueryRequest);
+        return postService.getPostVOPage(postPage, null);
     }
 }
+

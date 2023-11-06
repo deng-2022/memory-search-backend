@@ -36,12 +36,12 @@ public class IncSyncPostToEs {
     public void run() {
         // 查询近 5 分钟内的数据
         Date fiveMinutesAgoDate = new Date(new Date().getTime() - 5 * 60 * 1000L);
-        List<Post> postList = postMapper.listPostWithDelete(fiveMinutesAgoDate);
-        if (CollectionUtils.isEmpty(postList)) {
+        List<Post> articleList = postMapper.listPostWithDelete(fiveMinutesAgoDate);
+        if (CollectionUtils.isEmpty(articleList)) {
             log.info("no inc post");
             return;
         }
-        List<PostEsDTO> postEsDTOList = postList.stream()
+        List<PostEsDTO> postEsDTOList = articleList.stream()
                 .map(PostEsDTO::objToDto)
                 .collect(Collectors.toList());
         final int pageSize = 500;

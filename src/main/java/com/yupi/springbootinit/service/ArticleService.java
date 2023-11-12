@@ -2,8 +2,12 @@ package com.yupi.springbootinit.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.yupi.springbootinit.model.dto.article.ArticleDTO;
 import com.yupi.springbootinit.model.dto.article.ArticleQueryRequest;
 import com.yupi.springbootinit.model.entity.Article;
+import com.yupi.springbootinit.model.vo.ArticleVO;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Lenovo
@@ -11,6 +15,16 @@ import com.yupi.springbootinit.model.entity.Article;
  * @createDate 2023-11-06 21:28:22
  */
 public interface ArticleService extends IService<Article> {
+
+    /**
+     * 获取文章
+     *
+     * @param articleDTO
+     * @param request
+     * @return
+     */
+    ArticleVO getArticle(ArticleDTO articleDTO, HttpServletRequest request);
+
     /**
      * 从 ES 查询
      *

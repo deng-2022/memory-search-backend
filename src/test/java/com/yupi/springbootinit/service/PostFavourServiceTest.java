@@ -6,14 +6,14 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yupi.springbootinit.common.ErrorCode;
+import com.yupi.springbootinit.exception.ThrowUtils;
 import com.yupi.springbootinit.model.entity.Picture;
 import com.yupi.springbootinit.model.entity.Post;
 import com.yupi.springbootinit.model.entity.User;
 
-
 import javax.annotation.Resource;
 
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,20 +21,15 @@ import org.jsoup.select.Elements;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.util.StringUtils;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
  * 帖子收藏服务测试
- *
- * @author <a href="https://github.com/liyupi">程序员鱼皮</a>
- * @from <a href="https://yupi.icu">编程导航知识星球</a>
  */
 @SpringBootTest
 class PostFavourServiceTest {
@@ -146,5 +141,49 @@ class PostFavourServiceTest {
         // 3. 数据入库
         boolean b = postService.saveBatch(articleList);
         Assertions.assertTrue(b);
+    }
+
+    @Test
+    void testFetchPoem() throws IOException {
+        // 1. 获取数据
+        String url = "https://so.gushiwen.cn/shiwens/default.aspx?page=6&astr=%E6%9D%9C%E7%94%AB";
+        Document doc = Jsoup.connect(url)
+                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.62")
+                .get();
+        // 输出整个 HTML 文档
+        // System.out.println(doc);
+
+        // 捕获 class = "titletype"
+        // Elements elements = doc.select(".titletype");
+        // for (Element element : elements) {
+        //     System.out.println(element);
+        //     System.out.println(element.text());
+        // }
+
+        // 捕获 id = "leftZhankai"
+        Element leftZhankai = doc.getElementById("leftZhankai");
+        Elements heads = leftZhankai.select(".sons .cont div:nth-of-type(2)");
+
+        ArrayList<Post> postList = new ArrayList<>();
+        for (Element head : heads) {
+            Post post = new Post();
+
+            String title = head.select(">p:nth-of-type(1)").text();
+            String author = head.select(">p:nth-of-type(2)").text();
+            String content = head.select(".contson").text();
+            System.out.println("------------------------------------");
+
+            post.setTitle(title);
+            post.setAuthor(author);
+            post.setContent(content);
+            postList.add(post);
+        }
+
+        boolean saveBatch = postService.saveBatch(postList);
+        ThrowUtils.throwIf(!saveBatch, ErrorCode.OPERATION_ERROR, "批量插入诗词失败");
+
+
+        // System.out.println(leftZhankai);
+        // System.out.println(leftZhankai.text());
     }
 }

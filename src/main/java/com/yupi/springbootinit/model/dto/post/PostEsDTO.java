@@ -64,6 +64,11 @@ public class PostEsDTO implements Serializable {
     private Long userId;
 
     /**
+     * 诗人/词人
+     */
+    private String author;
+
+    /**
      * 创建时间
      */
     @Field(index = false, store = true, type = FieldType.Date, format = {}, pattern = DATE_TIME_PATTERN)

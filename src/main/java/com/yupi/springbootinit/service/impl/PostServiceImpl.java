@@ -139,6 +139,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         Long notId = postQueryRequest.getNotId();
         String searchText = postQueryRequest.getSearchText();
         String title = postQueryRequest.getTitle();
+        String author = postQueryRequest.getAuthor();
         String content = postQueryRequest.getContent();
         List<String> tagList = postQueryRequest.getTags();
         List<String> orTagList = postQueryRequest.getOrTags();
@@ -186,6 +187,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
             boolQueryBuilder.should(QueryBuilders.matchQuery("title", title));
             boolQueryBuilder.minimumShouldMatch(1);
         }
+
+        // 按作者检索
+        if (StringUtils.isNotBlank(author)) {
+            boolQueryBuilder.should(QueryBuilders.matchQuery("author", author));
+            boolQueryBuilder.minimumShouldMatch(1);
+        }
+
         // 按内容检索
         if (StringUtils.isNotBlank(content)) {
             boolQueryBuilder.should(QueryBuilders.matchQuery("content", content));
@@ -198,9 +206,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 //                .postTags("</font>"); //所有的字段都高亮
 //        highlightBuilder.requireFieldMatch(false);//如果要多个字段高亮,这项要为false
 
-        //查询带highlight，标题和内容都带上
+        // 查询带highlight，标题、作者和内容都带上
         HighlightBuilder highlightBuilder = new HighlightBuilder()
                 .field("content")
+                .requireFieldMatch(false)
+                .preTags("<font color='#eea6b7'>")
+                .postTags("</font>");
+        highlightBuilder.field("author")
                 .requireFieldMatch(false)
                 .preTags("<font color='#eea6b7'>")
                 .postTags("</font>");
@@ -243,6 +255,11 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
                     data.setTitle(highlightTitle.substring(1, highlightTitle.length() - 1));
                     System.out.println(data.getTitle());
                 }
+                if (hit.getHighlightFields().get("author") != null) {
+                    String highlightAuthor = String.valueOf(hit.getHighlightFields().get("author"));
+                    data.setAuthor(highlightAuthor.substring(1, highlightAuthor.length() - 1));
+                    System.out.println(data.getAuthor());
+                }
                 if (hit.getHighlightFields().get("content") != null) {
                     String highlightContent = String.valueOf(hit.getHighlightFields().get("content"));
                     data.setContent(highlightContent.substring(1, highlightContent.length() - 1));
@@ -263,9 +280,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
                         // 搜索关键词高亮替换
                         Post post = idPostMap.get(postId).get(0);
                         String hl_title = highlightDataMap.get(postId).getTitle();
+                        String hl_author = highlightDataMap.get(postId).getAuthor();
                         String hl_content = highlightDataMap.get(postId).getContent();
                         if (hl_title != null && hl_title.trim() != "") {
                             post.setTitle(hl_title);
+                        }
+                        if (hl_author != null && hl_author.trim() != "") {
+                            post.setAuthor(hl_author);
                         }
                         if (hl_content != null && hl_content.trim() != "") {
                             post.setContent(hl_content);

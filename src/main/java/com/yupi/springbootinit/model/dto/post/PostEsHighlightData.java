@@ -21,6 +21,11 @@ public class PostEsHighlightData {
     private String title;
 
     /**
+     * 诗人/词人
+     */
+    private String author;
+
+    /**
      * 内容
      */
     private String content;

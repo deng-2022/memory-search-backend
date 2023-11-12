@@ -40,6 +40,7 @@ public class PictureServiceImpl implements PictureService {
         if (StringUtils.isNotBlank(searchText)) {
             searchText = URLEncoder.encode(searchText, "UTF-8");
         }
+
         String url = String.format("https://cn.bing.com/images/search?q=%s&first=%s", searchText, current);
         Document doc = Jsoup.connect(url).get();
         Elements elements = doc.select(".iuscp.isv");

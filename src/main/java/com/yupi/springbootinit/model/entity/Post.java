@@ -56,6 +56,11 @@ public class Post implements Serializable {
     private Long userId;
 
     /**
+     * 诗人/词人
+     */
+    private String author;
+
+    /**
      * 创建时间
      */
     private Date createTime;

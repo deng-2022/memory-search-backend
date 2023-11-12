@@ -57,6 +57,11 @@ public class PostQueryRequest extends PageRequest implements Serializable {
     private Long userId;
 
     /**
+     * 诗人/词人
+     */
+    private String author;
+
+    /**
      * 收藏用户 id
      */
     private Long favourUserId;

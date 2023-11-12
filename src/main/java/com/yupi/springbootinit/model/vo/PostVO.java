@@ -3,9 +3,11 @@ package com.yupi.springbootinit.model.vo;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yupi.springbootinit.model.entity.Post;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
@@ -49,6 +51,11 @@ public class PostVO implements Serializable {
      * 创建用户 id
      */
     private Long userId;
+
+    /**
+     * 诗人/词人
+     */
+    private String author;
 
     /**
      * 创建时间

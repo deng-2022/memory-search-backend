@@ -1,5 +1,6 @@
 package com.memory.search.service;
 
+<<<<<<< HEAD
 import com.memory.search.model.entity.Post;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -11,6 +12,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
+=======
+import javax.annotation.Resource;
+
+import org.springframework.boot.test.context.SpringBootTest;
+>>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
 
 /**
  * 帖子服务测试
@@ -24,13 +30,18 @@ class PostServiceTest {
     @Resource
     private PostService postService;
 
+<<<<<<< HEAD
     //    @Test
+=======
+//    @Test
+>>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
 //    void searchFromEs() {
 //        PostQueryRequest postQueryRequest = new PostQueryRequest();
 //        postQueryRequest.setUserId(1L);
 //        Page<Post> postPage = postService.searchFromEs(postQueryRequest);
 //        Assertions.assertNotNull(postPage);
 //    }
+<<<<<<< HEAD
     @Test
     public void getArticle() {
 
@@ -170,5 +181,7 @@ class PostServiceTest {
         // System.out.println(leftZhankai.text());
     }
 
+=======
+>>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
 
 }

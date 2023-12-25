@@ -23,7 +23,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+<<<<<<< HEAD
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+=======
+>>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
@@ -231,7 +234,10 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
                 .withQuery(boolQueryBuilder)
                 .withHighlightBuilder(highlightBuilder)
                 .withPageable(pageRequest)
+<<<<<<< HEAD
                 // .withSuggestBuilder(suggestBuilder)
+=======
+>>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
                 .withSorts(sortBuilder).build();
         SearchHits<PostEsDTO> searchHits = elasticsearchRestTemplate.search(searchQuery, PostEsDTO.class);
 

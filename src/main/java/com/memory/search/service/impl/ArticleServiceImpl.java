@@ -20,21 +20,30 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
+<<<<<<< HEAD
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
+=======
+>>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+<<<<<<< HEAD
 import org.springframework.data.elasticsearch.core.suggest.response.Suggest;
+=======
+>>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+<<<<<<< HEAD
 import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
+=======
+>>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,11 +89,15 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         articleVO.setId(article.getId());
         articleVO.setTitle(article.getTitle());
         articleVO.setDescription(article.getDescription());
+<<<<<<< HEAD
 
         byte[] contentBytes = article.getContent();
         String content = new String(contentBytes, StandardCharsets.UTF_8);
         articleVO.setContent(content);
 
+=======
+        articleVO.setContent(article.getContent());
+>>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
         articleVO.setView(article.getView());
         articleVO.setLikes(article.getLikes());
         articleVO.setCollects(article.getCollects());
@@ -170,11 +183,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
             sortBuilder = SortBuilders.fieldSort(sortField);
             sortBuilder.order(CommonConstant.SORT_ORDER_ASC.equals(sortOrder) ? SortOrder.ASC : SortOrder.DESC);
         }
+<<<<<<< HEAD
 
         // 搜索建议
         SuggestBuilder suggestBuilder = new SuggestBuilder()
                 .addSuggestion("suggestionTitle", new CompletionSuggestionBuilder("title.suggest").skipDuplicates(true).size(5).prefix(searchText));
 
+=======
+>>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
         // 分页
         PageRequest pageRequest = PageRequest.of((int) pageNum, (int) pageSize);
         // 构造查询
@@ -182,6 +198,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
                 .withQuery(boolQueryBuilder)
                 .withHighlightBuilder(highlightBuilder)
                 .withPageable(pageRequest)
+<<<<<<< HEAD
                 .withSorts(sortBuilder)
                 .withSuggestBuilder(suggestBuilder)
                 .build();
@@ -204,6 +221,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
             }
         }
 
+=======
+                .withSorts(sortBuilder).build();
+        SearchHits<ArticleEsDTO> searchHits = elasticsearchRestTemplate.search(searchQuery, ArticleEsDTO.class);
+
+>>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
         Page<Article> page = new Page<>();
         page.setTotal(searchHits.getTotalHits());
         List<Article> resourceList = new ArrayList<>();
@@ -219,12 +241,20 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
                 if (hit.getHighlightFields().get("title") != null) {
                     String highlightTitle = String.valueOf(hit.getHighlightFields().get("title"));
                     data.setTitle(highlightTitle.substring(1, highlightTitle.length() - 1));
+<<<<<<< HEAD
                     // System.out.println(data.getTitle());
+=======
+                    System.out.println(data.getTitle());
+>>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
                 }
                 if (hit.getHighlightFields().get("description") != null) {
                     String highlightContent = String.valueOf(hit.getHighlightFields().get("description"));
                     data.setDescription(highlightContent.substring(1, highlightContent.length() - 1));
+<<<<<<< HEAD
                     // System.out.println(data.getContent());
+=======
+                    System.out.println(data.getContent());
+>>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
                 }
                 highlightDataMap.put(data.getId(), data);
             }

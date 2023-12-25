@@ -15,7 +15,7 @@ import java.util.Date;
  *
  * @author memory
  **/
-@Document(indexName = "article_v1")
+@Document(indexName = "article_v4")
 @Data
 public class ArticleEsDTO implements Serializable {
     private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
@@ -35,6 +35,11 @@ public class ArticleEsDTO implements Serializable {
      * 文章摘要
      */
     private String description;
+
+    /**
+     * 文章类型
+     */
+    private Integer type;
 
     /**
      * 文章内容

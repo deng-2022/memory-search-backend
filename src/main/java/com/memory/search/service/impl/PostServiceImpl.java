@@ -20,12 +20,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.search.suggest.SuggestBuilder;
+import org.elasticsearch.search.suggest.SuggestBuilders;
+import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHit;
@@ -212,6 +217,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
             sortBuilder = SortBuilders.fieldSort(sortField);
             sortBuilder.order(CommonConstant.SORT_ORDER_ASC.equals(sortOrder) ? SortOrder.ASC : SortOrder.DESC);
         }
+
+        // 搜索建议
+        SuggestBuilder suggestBuilder = new SuggestBuilder()
+                .addSuggestion("suggestionTitle", new CompletionSuggestionBuilder("suggestion").skipDuplicates(true).size(5).prefix(searchText));
+
+        // HashSet<Temp> temps = new HashSet<>();
+
         // 分页
         PageRequest pageRequest = PageRequest.of((int) current, (int) pageSize);
         // 构造查询
@@ -219,6 +231,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
                 .withQuery(boolQueryBuilder)
                 .withHighlightBuilder(highlightBuilder)
                 .withPageable(pageRequest)
+                // .withSuggestBuilder(suggestBuilder)
                 .withSorts(sortBuilder).build();
         SearchHits<PostEsDTO> searchHits = elasticsearchRestTemplate.search(searchQuery, PostEsDTO.class);
 

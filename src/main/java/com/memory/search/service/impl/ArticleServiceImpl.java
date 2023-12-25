@@ -20,16 +20,21 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.search.suggest.SuggestBuilder;
+import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.suggest.response.Suggest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.net.http.HttpClient;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -75,7 +80,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         articleVO.setId(article.getId());
         articleVO.setTitle(article.getTitle());
         articleVO.setDescription(article.getDescription());
-        articleVO.setContent(article.getContent());
+
+        byte[] contentBytes = article.getContent();
+        String content = new String(contentBytes, StandardCharsets.UTF_8);
+        articleVO.setContent(content);
+
         articleVO.setView(article.getView());
         articleVO.setLikes(article.getLikes());
         articleVO.setCollects(article.getCollects());
@@ -161,6 +170,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
             sortBuilder = SortBuilders.fieldSort(sortField);
             sortBuilder.order(CommonConstant.SORT_ORDER_ASC.equals(sortOrder) ? SortOrder.ASC : SortOrder.DESC);
         }
+
+        // 搜索建议
+        SuggestBuilder suggestBuilder = new SuggestBuilder()
+                .addSuggestion("suggestionTitle", new CompletionSuggestionBuilder("title.suggest").skipDuplicates(true).size(5).prefix(searchText));
+
         // 分页
         PageRequest pageRequest = PageRequest.of((int) pageNum, (int) pageSize);
         // 构造查询
@@ -168,8 +182,27 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
                 .withQuery(boolQueryBuilder)
                 .withHighlightBuilder(highlightBuilder)
                 .withPageable(pageRequest)
-                .withSorts(sortBuilder).build();
+                .withSorts(sortBuilder)
+                .withSuggestBuilder(suggestBuilder)
+                .build();
         SearchHits<ArticleEsDTO> searchHits = elasticsearchRestTemplate.search(searchQuery, ArticleEsDTO.class);
+
+
+        // 从 SearchResponse 中获取建议
+        Suggest suggest = searchHits.getSuggest();
+        if (suggest != null) {
+            // 获取特定的建议结果
+            Suggest.Suggestion<? extends Suggest.Suggestion.Entry<? extends Suggest.Suggestion.Entry.Option>> termSuggestion = suggest.getSuggestion("suggestionTitle");
+            if (termSuggestion != null) {
+                // 遍历建议选项
+                for (Suggest.Suggestion.Entry<? extends Suggest.Suggestion.Entry.Option> entry : termSuggestion.getEntries()) {
+                    // 处理每个建议选项，例如打印它们
+                    System.out.println(entry.getText());
+                    System.out.println(entry.getOptions().get(0).getText());
+                    System.out.println(entry.getOptions().get(1).getText());
+                }
+            }
+        }
 
         Page<Article> page = new Page<>();
         page.setTotal(searchHits.getTotalHits());
@@ -186,12 +219,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
                 if (hit.getHighlightFields().get("title") != null) {
                     String highlightTitle = String.valueOf(hit.getHighlightFields().get("title"));
                     data.setTitle(highlightTitle.substring(1, highlightTitle.length() - 1));
-                    System.out.println(data.getTitle());
+                    // System.out.println(data.getTitle());
                 }
                 if (hit.getHighlightFields().get("description") != null) {
                     String highlightContent = String.valueOf(hit.getHighlightFields().get("description"));
                     data.setDescription(highlightContent.substring(1, highlightContent.length() - 1));
-                    System.out.println(data.getContent());
+                    // System.out.println(data.getContent());
                 }
                 highlightDataMap.put(data.getId(), data);
             }

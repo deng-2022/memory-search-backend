@@ -27,6 +27,11 @@ public class ArticleDTO extends CommonDTO {
     private String description;
 
     /**
+     * 文章类型
+     */
+    private Integer type;
+
+    /**
      * 文章内容
      */
     private String content;

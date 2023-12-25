@@ -18,7 +18,7 @@ public class Article implements Serializable {
     /**
      * 文章id
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    // @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -34,12 +34,17 @@ public class Article implements Serializable {
     /**
      * 文章内容
      */
-    private String content;
+    private byte[] content;
 
     /**
      * 创作者
      */
     private Long authorId;
+
+    /**
+     * 文章类型
+     */
+    private Integer type;
 
     /**
      * 浏览量

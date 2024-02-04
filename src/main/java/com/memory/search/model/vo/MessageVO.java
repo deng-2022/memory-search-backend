@@ -1,4 +1,4 @@
-package com.memory.search.model.entity;
+package com.memory.search.model.vo;
 
 import lombok.Data;
 
@@ -10,7 +10,7 @@ import lombok.Data;
  */
 
 @Data
-public class Message {
+public class MessageVO {
     /**
      * 用户
      */
@@ -21,9 +21,17 @@ public class Message {
      */
     private String searchText;
 
+    /**
+     * 搜索词条
+     */
+    private Double searchNum;
 
-    public Message(Long userId, String searchText) {
+    public MessageVO() {
+    }
+
+    public MessageVO(Long userId, String searchText, Double searchNum) {
         this.userId = userId;
         this.searchText = searchText;
+        this.searchNum = searchNum;
     }
 }

@@ -2,6 +2,7 @@ package com.memory.search.service;
 
 import com.memory.search.model.dto.search.SearchQueryRequest;
 import com.memory.search.model.entity.Message;
+import com.memory.search.model.vo.MessageVO;
 import com.memory.search.model.vo.SearchVO;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,12 +35,12 @@ public interface SearchService {
      * @param suggestText 聚合搜索词条
      * @return 执行结果
      */
-    Message setHotWords(String suggestText, HttpServletRequest request);
+    List<Message> setHotWords(String suggestText, HttpServletRequest request);
 
     /**
      * 获取热搜词
      *
      * @return 执行结果
      */
-    List<Message> getHotWords();
+    List<MessageVO> getHotWords();
 }

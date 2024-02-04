@@ -4,8 +4,10 @@ import com.memory.search.common.BaseResponse;
 import com.memory.search.common.ResultUtils;
 import com.memory.search.model.dto.search.SearchQueryRequest;
 import com.memory.search.model.entity.Message;
+import com.memory.search.model.vo.MessageVO;
 import com.memory.search.model.vo.SearchVO;
 import com.memory.search.service.SearchService;
+import com.qcloud.cos.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,19 +51,21 @@ public class SearchController {
     }
 
     @GetMapping("set/hot/words")
-    public BaseResponse<Message> setHotWords(String suggestText, HttpServletRequest request) {
+    public BaseResponse<List<Message>> setHotWords(String suggestTextStr, HttpServletRequest request) {
         // controller层对参数的校验
+        if (StringUtils.isNullOrEmpty(suggestTextStr)) {
+            return null;
+        }
 
-
-        Message message = searchService.setHotWords(suggestText, request);
-        return ResultUtils.success(message);
+        List<Message> messageList = searchService.setHotWords(suggestTextStr, request);
+        return ResultUtils.success(messageList);
     }
 
     @GetMapping("get/hot/words")
-    public BaseResponse<List<Message>> getHotWords() {
+    public BaseResponse<List<MessageVO>> getHotWords() {
         // controller层对参数的校验
 
-        List<Message> hotWords = searchService.getHotWords();
+        List<MessageVO> hotWords = searchService.getHotWords();
         return ResultUtils.success(hotWords);
     }
 }

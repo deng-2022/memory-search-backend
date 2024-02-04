@@ -1,6 +1,7 @@
 package com.memory.search.service;
 
-<<<<<<< HEAD
+import com.memory.search.common.ErrorCode;
+import com.memory.search.exception.ThrowUtils;
 import com.memory.search.model.entity.Post;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,11 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
-=======
-import javax.annotation.Resource;
-
-import org.springframework.boot.test.context.SpringBootTest;
->>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
 
 /**
  * 帖子服务测试
@@ -30,18 +26,7 @@ class PostServiceTest {
     @Resource
     private PostService postService;
 
-<<<<<<< HEAD
-    //    @Test
-=======
-//    @Test
->>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
-//    void searchFromEs() {
-//        PostQueryRequest postQueryRequest = new PostQueryRequest();
-//        postQueryRequest.setUserId(1L);
-//        Page<Post> postPage = postService.searchFromEs(postQueryRequest);
-//        Assertions.assertNotNull(postPage);
-//    }
-<<<<<<< HEAD
+
     @Test
     public void getArticle() {
 
@@ -75,7 +60,7 @@ class PostServiceTest {
     @Test
     void testFetchPoem() throws IOException {
         // 1. 获取数据
-        String url = "https://so.gushiwen.cn/shiwens/default.aspx?page=6&astr=%E6%9D%9C%E7%94%AB";
+        String url = "https://so.gushiwen.cn/shiwens/default.aspx?page=3&tstr=&astr=%e7%8e%8b%e7%bb%b4&cstr=&xstr=";
         Document doc = Jsoup.connect(url)
                 .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.62")
                 .get();
@@ -115,8 +100,8 @@ class PostServiceTest {
             postList.add(post);
         }
 
-        // boolean saveBatch = postService.saveBatch(postList);
-        // ThrowUtils.throwIf(!saveBatch, ErrorCode.OPERATION_ERROR, "批量插入诗词失败");
+        boolean saveBatch = postService.saveBatch(postList);
+        ThrowUtils.throwIf(!saveBatch, ErrorCode.OPERATION_ERROR, "批量插入诗词失败");
 
 
         // System.out.println(leftZhankai);
@@ -181,7 +166,5 @@ class PostServiceTest {
         // System.out.println(leftZhankai.text());
     }
 
-=======
->>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
 
 }

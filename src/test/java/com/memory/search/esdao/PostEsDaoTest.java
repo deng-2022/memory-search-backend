@@ -18,8 +18,6 @@ import org.springframework.data.domain.Sort;
 /**
  * 帖子 ES 操作测试
  *
- * @author <a href="https://github.com/liyupi">程序员鱼皮</a>
- * @from <a href="https://yupi.icu">编程导航知识星球</a>
  */
 @SpringBootTest
 public class PostEsDaoTest {
@@ -37,11 +35,15 @@ public class PostEsDaoTest {
 //        System.out.println(page);
 //    }
 
+    /**
+     *
+     */
     @Test
     void testSelect() {
         System.out.println(postEsDao.count());
         Page<PostEsDTO> PostPage = postEsDao.findAll(
                 PageRequest.of(0, 5, Sort.by("createTime")));
+
         List<PostEsDTO> articleList = PostPage.getContent();
         System.out.println(articleList);
     }
@@ -61,7 +63,6 @@ public class PostEsDaoTest {
         postEsDTO.setIsDelete(0);
         postEsDao.save(postEsDTO);
         System.out.println(postEsDTO.getId());
-
     }
 
     @Test

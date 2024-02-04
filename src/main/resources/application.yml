@@ -24,6 +24,13 @@ spring:
     username: root
     password: Dw990831
 
+    # Redis 配置
+    # todo 需替换配置，然后取消注释
+  redis:
+    database: 3
+    host: localhost
+    port: 6379
+
   # Elasticsearch 配置
   elasticsearch:
     uris: http://localhost:9200
@@ -35,6 +42,19 @@ spring:
     multipart:
       # 大小限制
       max-file-size: 10MB
+
+knife4j:
+  enable: true
+  openapi:
+    title: MemorySearch 忆搜阁 接口文档
+    description: MemorySearch 忆搜阁
+    concat: 3348407547@qq.com
+    url: https://deng-2022.gitee.io/blog/
+    version: 1.0
+    license: Apache 2.0
+    group:
+      test1:
+        group-name: memory-search
 
 server:
   address: 0.0.0.0

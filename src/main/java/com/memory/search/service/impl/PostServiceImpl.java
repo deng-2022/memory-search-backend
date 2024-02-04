@@ -20,19 +20,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-<<<<<<< HEAD
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-=======
->>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
-import org.elasticsearch.search.suggest.SuggestBuilders;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
@@ -49,9 +43,6 @@ import java.util.stream.Collectors;
 
 /**
  * 帖子服务实现
- *
- * @author <a href="https://github.com/liyupi">程序员鱼皮</a>
- * @from <a href="https://yupi.icu">编程导航知识星球</a>
  */
 @Service
 @Slf4j
@@ -141,19 +132,25 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         long pageSize = postQueryRequest.getPageSize();
         String sortField = postQueryRequest.getSortField();
         String sortOrder = postQueryRequest.getSortOrder();
+
+        // 构建布尔查询
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        // 过滤
+
+        // 过滤 isDelete 字段
         boolQueryBuilder.filter(QueryBuilders.termQuery("isDelete", 0));
+        // 过滤 id 字段
         if (id != null) {
             boolQueryBuilder.filter(QueryBuilders.termQuery("id", id));
         }
+        // 过滤 notId 字段
         if (notId != null) {
             boolQueryBuilder.mustNot(QueryBuilders.termQuery("id", notId));
         }
+        // 过滤 userId 字段
         if (userId != null) {
             boolQueryBuilder.filter(QueryBuilders.termQuery("userId", userId));
         }
-        // 必须包含所有标签
+        // 过滤 tag 字段
         if (CollectionUtils.isNotEmpty(tagList)) {
             for (String tag : tagList) {
                 boolQueryBuilder.filter(QueryBuilders.termQuery("tags", tag));
@@ -168,6 +165,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
             orTagBoolQueryBuilder.minimumShouldMatch(1);
             boolQueryBuilder.filter(orTagBoolQueryBuilder);
         }
+
         // 按关键词检索 满足其一√
         if (StringUtils.isNotBlank(searchText)) {
             boolQueryBuilder.should(QueryBuilders.matchQuery("title", searchText));
@@ -175,6 +173,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
             boolQueryBuilder.should(QueryBuilders.matchQuery("author", searchText));
             boolQueryBuilder.minimumShouldMatch(1);
         }
+
         // 按标题检索
         if (StringUtils.isNotBlank(title)) {
             boolQueryBuilder.should(QueryBuilders.matchQuery("title", title));
@@ -214,30 +213,27 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
                 .preTags("<font color='#eea6b7'>")
                 .postTags("</font>");
 
-        // 排序
+        // 按指定字段排序
         SortBuilder<?> sortBuilder = SortBuilders.scoreSort();
         if (StringUtils.isNotBlank(sortField)) {
             sortBuilder = SortBuilders.fieldSort(sortField);
             sortBuilder.order(CommonConstant.SORT_ORDER_ASC.equals(sortOrder) ? SortOrder.ASC : SortOrder.DESC);
         }
 
-        // 搜索建议
-        SuggestBuilder suggestBuilder = new SuggestBuilder()
-                .addSuggestion("suggestionTitle", new CompletionSuggestionBuilder("suggestion").skipDuplicates(true).size(5).prefix(searchText));
+        // // 搜索建议
+        // SuggestBuilder suggestBuilder = new SuggestBuilder()
+        //         .addSuggestion("suggestionTitle", new CompletionSuggestionBuilder("suggestion").skipDuplicates(true).size(5).prefix(searchText));
 
-        // HashSet<Temp> temps = new HashSet<>();
 
         // 分页
         PageRequest pageRequest = PageRequest.of((int) current, (int) pageSize);
+
         // 构造查询
         NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(boolQueryBuilder)
                 .withHighlightBuilder(highlightBuilder)
                 .withPageable(pageRequest)
-<<<<<<< HEAD
                 // .withSuggestBuilder(suggestBuilder)
-=======
->>>>>>> 1865428977bda5d1cd80d3ff86f30f41e0e5add8
                 .withSorts(sortBuilder).build();
         SearchHits<PostEsDTO> searchHits = elasticsearchRestTemplate.search(searchQuery, PostEsDTO.class);
 

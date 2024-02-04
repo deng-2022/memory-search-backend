@@ -25,10 +25,6 @@ public class PictureDataSource implements DataSource<Picture> {
 
     @Override
     public Page<Picture> search(String searText, long pageSize, long current) {
-        try {
-            return pictureService.listPictureVOByPage(searText, pageSize, current);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return pictureService.listPictureVOByPage(searText, pageSize, current);
     }
 }

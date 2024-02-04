@@ -3,6 +3,7 @@ package com.memory.search.dataSource;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.memory.search.model.dto.article.ArticleQueryRequest;
 import com.memory.search.model.entity.Article;
+import com.memory.search.model.vo.ArticleVO;
 import com.memory.search.service.ArticleService;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +20,12 @@ import javax.annotation.Resource;
  * 博文搜索 适配实现
  */
 @Service
-public class ArticleDataSource implements DataSource<Article> {
+public class ArticleDataSource implements DataSource<ArticleVO> {
     @Resource
     private ArticleService articleService;
 
     @Override
-    public Page<Article> search(String searText, long pageSize, long current) {
+    public Page<ArticleVO> search(String searText, long pageSize, long current) {
         ArticleQueryRequest articleQueryRequest = new ArticleQueryRequest();
 
         articleQueryRequest.setSearchText(searText);

@@ -31,5 +31,5 @@ public interface ArticleService extends IService<Article> {
      * @param articleQueryRequest 博文查询请求参数
      * @return 博文列表
      */
-    Page<Article> searchFromEs(ArticleQueryRequest articleQueryRequest);
+    Page<ArticleVO> searchFromEs(ArticleQueryRequest articleQueryRequest);
 }

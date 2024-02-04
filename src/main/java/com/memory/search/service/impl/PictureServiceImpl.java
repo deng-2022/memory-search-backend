@@ -12,6 +12,7 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,17 +35,28 @@ public class PictureServiceImpl implements PictureService {
      * @param currentPage 当前页
      */
     @Override
-    public Page<Picture> listPictureVOByPage(String searchText, long pageSize, long currentPage) throws IOException {
+    public Page<Picture> listPictureVOByPage(String searchText, long pageSize, long currentPage) {
         long current = currentPage - 1;
         // 非空条件，转码
         if (StringUtils.isNotBlank(searchText)) {
-            searchText = URLEncoder.encode(searchText, "UTF-8");
+            try {
+                searchText = URLEncoder.encode(searchText, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         String url = String.format("https://cn.bing.com/images/search?q=%s&first=%s", searchText, current);
-        Document doc = Jsoup.connect(url).get();
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(url).get();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         Elements elements = doc.select(".iuscp.isv");
         List<Picture> pictureList = new ArrayList<>();
+
         int count = 0;
         for (Element element : elements) {
             String mUrl = getImageUrl(element);
@@ -60,7 +72,6 @@ public class PictureServiceImpl implements PictureService {
         Page<Picture> picturePage = new Page<>(pageSize, currentPage);
 
         picturePage.setRecords(pictureList);
-
         return picturePage;
     }
 

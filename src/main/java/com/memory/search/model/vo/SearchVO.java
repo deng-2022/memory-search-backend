@@ -1,7 +1,6 @@
 package com.memory.search.model.vo;
 
 import com.memory.search.model.entity.Picture;
-import com.memory.search.model.entity.Article;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,12 +14,24 @@ import java.util.List;
  */
 @Data
 public class SearchVO implements Serializable {
-    private List<Article> articleList;
+    /**
+     * 博文搜索列表
+     */
+    private List<ArticleVO> articleList;
 
+    /**
+     * 诗词搜索列表
+     */
     private List<PostVO> postVOList;
 
+    /**
+     * 图片搜索列表
+     */
     private List<Picture> pictureList;
 
+    /**
+     * 聚合搜索结果列表
+     */
     private List<?> dataList;
 
     private static final long serialVersionUID = 1L;

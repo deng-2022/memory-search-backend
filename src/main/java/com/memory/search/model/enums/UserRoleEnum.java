@@ -7,19 +7,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 搜索类型枚举
+ * 用户角色枚举
+ *
+ * @author <a href="https://gitee.com/deng-2022">回忆如初</a>
+ * @from <a href="https://deng-2022.gitee.io/blog/">Memory's Blog</a>
  */
-public enum SearchTypeEnum {
+public enum UserRoleEnum {
 
-    POST("诗词", "post"),
-    ARTICLE("博文", "article"),
-    PICTURE("图片", "picture");
+    USER("用户", "user"),
+    ADMIN("管理员", "admin"),
+    BAN("被封号", "ban");
 
     private final String text;
 
     private final String value;
 
-    SearchTypeEnum(String text, String value) {
+    UserRoleEnum(String text, String value) {
         this.text = text;
         this.value = value;
     }
@@ -39,11 +42,11 @@ public enum SearchTypeEnum {
      * @param value
      * @return
      */
-    public static SearchTypeEnum getEnumByValue(String value) {
+    public static UserRoleEnum getEnumByValue(String value) {
         if (ObjectUtils.isEmpty(value)) {
             return null;
         }
-        for (SearchTypeEnum anEnum : SearchTypeEnum.values()) {
+        for (UserRoleEnum anEnum : UserRoleEnum.values()) {
             if (anEnum.value.equals(value)) {
                 return anEnum;
             }

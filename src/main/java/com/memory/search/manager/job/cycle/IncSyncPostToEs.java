@@ -1,4 +1,4 @@
-package com.memory.search.job.cycle;
+package com.memory.search.manager.job.cycle;
 
 import com.memory.search.mapper.PostMapper;
 import com.memory.search.model.entity.Post;

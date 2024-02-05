@@ -61,6 +61,11 @@ public class ArticleVO {
     private String articleUrl;
 
     /**
+     * 作者信息
+     */
+    private UserVO userVO;
+
+    /**
      * 文章标签
      */
     private String tags;

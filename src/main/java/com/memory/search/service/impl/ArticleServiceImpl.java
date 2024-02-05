@@ -3,22 +3,23 @@ package com.memory.search.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.memory.search.constant.CommonConstant;
+import com.memory.search.manager.BaseContext;
 import com.memory.search.mapper.ArticleMapper;
 import com.memory.search.model.dto.article.ArticleDTO;
 import com.memory.search.model.dto.article.ArticleEsDTO;
 import com.memory.search.model.dto.article.ArticleEsHighlightData;
 import com.memory.search.model.dto.article.ArticleQueryRequest;
 import com.memory.search.model.entity.Article;
+import com.memory.search.model.entity.User;
 import com.memory.search.model.vo.ArticleVO;
+import com.memory.search.model.vo.UserVO;
 import com.memory.search.service.ArticleService;
+import com.memory.search.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
@@ -49,6 +50,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         implements ArticleService {
     @Resource
     private ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    @Resource
+    private UserService userService;
 
 
     /**
@@ -92,6 +96,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         articleVO.setTags(article.getTags());
         articleVO.setCreateTime(article.getCreateTime());
         articleVO.setUpdateTime(article.getUpdateTime());
+
+        Long currentId = BaseContext.getCurrentId();
+        User user = userService.getById(currentId);
+        UserVO userVO = userService.getUserVO(user);
+        articleVO.setUserVO(userVO);
 
         return articleVO;
     }

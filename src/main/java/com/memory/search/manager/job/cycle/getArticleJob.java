@@ -1,4 +1,4 @@
-package com.memory.search.job.cycle;
+package com.memory.search.manager.job.cycle;
 
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;

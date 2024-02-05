@@ -31,7 +31,7 @@ public class LogInterceptor {
      * @param point 连接点
      * @return 执行拦截
      */
-    @Around("execution(* com.memory.oj.controller.*.*(..))")
+    @Around("execution(* com.memory.search.controller.*.*(..))")
     public Object doInterceptor(ProceedingJoinPoint point) throws Throwable {
         // 计时
         StopWatch stopWatch = new StopWatch();

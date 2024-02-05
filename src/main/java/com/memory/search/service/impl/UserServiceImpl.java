@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.memory.search.common.ErrorCode;
 import com.memory.search.constant.CommonConstant;
 import com.memory.search.exception.BusinessException;
+import com.memory.search.manager.BaseContext;
 import com.memory.search.mapper.UserMapper;
 import com.memory.search.model.dto.user.UserQueryRequest;
 import com.memory.search.model.entity.User;
@@ -107,6 +108,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         // 3. 记录用户的登录态
         request.getSession().setAttribute(USER_LOGIN_STATE, user);
+
+        // ThreadLocal 记录用户 id
+        BaseContext.setCurrentId(user.getId());
+        System.out.println(BaseContext.getCurrentId());
+
         return this.getLoginUserVO(user);
     }
 

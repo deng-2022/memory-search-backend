@@ -1,4 +1,4 @@
-package com.memory.search.job.once;
+package com.memory.search.manager.job.once;
 
 import com.memory.search.model.entity.Post;
 import com.memory.search.service.PostService;

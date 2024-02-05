@@ -35,4 +35,14 @@ public class RedisTest {
         System.out.println(size);
     }
 
+
+    @Test
+    void test3() {
+        ThreadLocal<Long> longThreadLocal = new ThreadLocal<>();
+        longThreadLocal.set(2L);
+
+        Long aLong = longThreadLocal.get();
+        System.out.println(aLong);
+    }
+
 }

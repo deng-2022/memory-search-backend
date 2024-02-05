@@ -1,4 +1,4 @@
-package com.memory.search.job.cycle;
+package com.memory.search.manager.job.cycle;
 
 import cn.hutool.json.JSONUtil;
 import com.memory.search.model.entity.Picture;

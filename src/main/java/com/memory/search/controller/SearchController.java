@@ -2,6 +2,7 @@ package com.memory.search.controller;
 
 import com.memory.search.common.BaseResponse;
 import com.memory.search.common.ResultUtils;
+import com.memory.search.manager.BaseContext;
 import com.memory.search.model.dto.search.SearchQueryRequest;
 import com.memory.search.model.entity.Message;
 import com.memory.search.model.vo.MessageVO;
@@ -34,6 +35,9 @@ public class SearchController {
     public BaseResponse<SearchVO> searchAll(@RequestBody SearchQueryRequest searchQueryRequest,
                                             HttpServletRequest request) throws IOException, ExecutionException, InterruptedException {
         // controller层对参数的校验
+        Long currentId = BaseContext.getCurrentId();
+        System.out.println(currentId);
+
 
         SearchVO searchVO = searchService.searchAll(searchQueryRequest, request);
         return ResultUtils.success(searchVO);

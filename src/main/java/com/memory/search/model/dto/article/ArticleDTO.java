@@ -25,6 +25,10 @@ public class ArticleDTO extends CommonDTO {
      * 文章摘要
      */
     private String description;
+    /**
+     * 作者id
+     */
+    private Long userId;
 
     /**
      * 文章类型

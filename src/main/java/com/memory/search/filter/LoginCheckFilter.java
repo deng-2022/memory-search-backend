@@ -42,12 +42,10 @@ public class LoginCheckFilter implements Filter {// 验证是否登录
 
         // 定义不需要处理的请求路径
         String[] urls = new String[]{
-                "/employee/login", // 登录时
-                "/employee/logout", // 登出时
-                "/backend/**",
-                "/front/**",
-                "/user/sendMsg",
-                "/user/login"
+                "/api/user/login", // 登录时
+                "/api/user/get/login",
+                "/api/v2/api-docs",
+                "/api/search/all"
         };
 
         // 2.判断本次请求是否需要处理

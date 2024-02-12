@@ -22,12 +22,20 @@ public interface SearchService {
     SearchVO searchAll(SearchQueryRequest searchQueryRequest, HttpServletRequest request);
 
     /**
-     * 搜索建议
+     * 搜索词建议
      *
      * @param suggestText 聚合搜索词条
      * @return 搜索建议词
      */
     List<String> searchSuggestFromEs(String suggestText);
+
+    /**
+     * 热门词分析
+     *
+     * @return 热门用词
+     */
+    List<String> getPopularTopic();
+
 
     /**
      * 记录搜索词条

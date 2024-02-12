@@ -4,18 +4,18 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.Gson;
+import com.memory.search.common.ErrorCode;
 import com.memory.search.constant.CommonConstant;
 import com.memory.search.exception.BusinessException;
 import com.memory.search.exception.ThrowUtils;
 import com.memory.search.mapper.PostMapper;
-import com.memory.search.model.entity.Post;
-import com.memory.search.service.PostService;
-import com.memory.search.utils.SqlUtils;
-import com.memory.search.common.ErrorCode;
 import com.memory.search.model.dto.post.PostEsDTO;
 import com.memory.search.model.dto.post.PostEsHighlightData;
 import com.memory.search.model.dto.post.PostQueryRequest;
+import com.memory.search.model.entity.Post;
 import com.memory.search.model.vo.PostVO;
+import com.memory.search.service.PostService;
+import com.memory.search.utils.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -26,8 +26,6 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
-import org.elasticsearch.search.suggest.SuggestBuilder;
-import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHit;
@@ -38,7 +36,10 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -136,6 +137,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         // 构建布尔查询
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 
+
+
         // 过滤 isDelete 字段
         boolQueryBuilder.filter(QueryBuilders.termQuery("isDelete", 0));
         // 过滤 id 字段
@@ -219,11 +222,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
             sortBuilder = SortBuilders.fieldSort(sortField);
             sortBuilder.order(CommonConstant.SORT_ORDER_ASC.equals(sortOrder) ? SortOrder.ASC : SortOrder.DESC);
         }
-
-        // // 搜索建议
-        // SuggestBuilder suggestBuilder = new SuggestBuilder()
-        //         .addSuggestion("suggestionTitle", new CompletionSuggestionBuilder("suggestion").skipDuplicates(true).size(5).prefix(searchText));
-
 
         // 分页
         PageRequest pageRequest = PageRequest.of((int) current, (int) pageSize);

@@ -15,5 +15,10 @@ public interface CommonConstant {
      * 降序
      */
     String SORT_ORDER_DESC = " descend";
-    
+
+    /**
+     * 爬取图片数量
+     */
+    int PICTURE_NUMS = 24;
+
 }

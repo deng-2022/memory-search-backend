@@ -3,7 +3,6 @@ package com.memory.search.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.memory.search.constant.CommonConstant;
-import com.memory.search.manager.BaseContext;
 import com.memory.search.mapper.ArticleMapper;
 import com.memory.search.model.dto.article.ArticleDTO;
 import com.memory.search.model.dto.article.ArticleEsDTO;
@@ -17,6 +16,7 @@ import com.memory.search.service.ArticleService;
 import com.memory.search.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -96,11 +96,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         articleVO.setTags(article.getTags());
         articleVO.setCreateTime(article.getCreateTime());
         articleVO.setUpdateTime(article.getUpdateTime());
+        Long userId = article.getUserId();
 
-        Long currentId = BaseContext.getCurrentId();
-        User user = userService.getById(currentId);
-        UserVO userVO = userService.getUserVO(user);
-        articleVO.setUserVO(userVO);
+        // 封装作者信息
+        if(ObjectUtils.isNotEmpty(userId)){
+            User user = userService.getById(userId);
+            UserVO userVO = userService.getUserVO(user);
+            articleVO.setUserVO(userVO);
+        }
 
         return articleVO;
     }

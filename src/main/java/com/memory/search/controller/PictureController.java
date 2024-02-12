@@ -1,11 +1,11 @@
 package com.memory.search.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.memory.search.common.ResultUtils;
-import com.memory.search.service.PictureService;
 import com.memory.search.common.BaseResponse;
+import com.memory.search.common.ResultUtils;
 import com.memory.search.model.dto.picture.PictureQueryRequest;
 import com.memory.search.model.entity.Picture;
+import com.memory.search.service.PictureService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,5 +41,20 @@ public class PictureController {
 
         Page<Picture> picturePage = pictureService.listPictureVOByPage(searchText, pageSize, currentPage);
         return ResultUtils.success(picturePage);
+    }
+
+    /**
+     * 分页获取当前用户创建的资源列表
+     *
+     * @param pictureQueryRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/my/list/picture/vo")
+    public BaseResponse<Page<Picture>> listMyPostVOByPage(@RequestBody PictureQueryRequest pictureQueryRequest,
+                                                         HttpServletRequest request) {
+        // 限制爬虫
+        Page<Picture> listMyPostVOByPage = pictureService.listMyPostVOByPage(pictureQueryRequest, request);
+        return ResultUtils.success(listMyPostVOByPage);
     }
 }

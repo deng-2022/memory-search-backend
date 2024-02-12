@@ -2,24 +2,19 @@ package com.memory.search.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
-import com.memory.search.common.ResultUtils;
-import com.memory.search.exception.BusinessException;
-import com.memory.search.exception.ThrowUtils;
-import com.memory.search.model.entity.Post;
 import com.memory.search.common.BaseResponse;
 import com.memory.search.common.DeleteRequest;
 import com.memory.search.common.ErrorCode;
+import com.memory.search.common.ResultUtils;
+import com.memory.search.exception.BusinessException;
+import com.memory.search.exception.ThrowUtils;
 import com.memory.search.model.dto.post.PostAddRequest;
 import com.memory.search.model.dto.post.PostEditRequest;
 import com.memory.search.model.dto.post.PostQueryRequest;
 import com.memory.search.model.dto.post.PostUpdateRequest;
+import com.memory.search.model.entity.Post;
 import com.memory.search.model.vo.PostVO;
 import com.memory.search.service.PostService;
-
-import java.util.List;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,11 +22,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
 /**
  * 帖子接口
  *
- * @author <a href="https://github.com/liyupi">程序员鱼皮</a>
- * @from <a href="https://yupi.icu">编程导航知识星球</a>
+ * @author <a href="https://gitee.com/deng-2022">回忆如初</a>
+ * @from <a href="https://deng-2022.gitee.io/blog/">Memory's Blog</a>
  */
 @RestController
 @RequestMapping("/post")
@@ -120,22 +119,25 @@ public class PostController {
     }
 
     /**
-     * 分页获取列表（封装类）
+     * 分页获取诗词（封装类）
      *
      * @param postQueryRequest
      * @param request
      * @return
      */
     @PostMapping("/list/page/vo")
-    public BaseResponse<Page<PostVO>> listPostVOByPage(@RequestBody PostQueryRequest postQueryRequest,
+    public BaseResponse<Page<Post>> listPostVOByPage(@RequestBody PostQueryRequest postQueryRequest,
                                                        HttpServletRequest request) {
-        long current = postQueryRequest.getPageNum();
+        long pageNum = postQueryRequest.getPageNum();
         long size = postQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
 
-        Page<PostVO> postVOPage = postService.listPostVOByPage(postQueryRequest, request);
-        return ResultUtils.success(postVOPage);
+        Page<Post> PostPage = postService.page(new Page<>(pageNum, size),
+                postService.getQueryWrapper(postQueryRequest));
+
+        // Page<PostVO> postVOPage = postService.listPostVOByPage(postQueryRequest, request);
+        return ResultUtils.success(PostPage);
     }
 
     /**
@@ -159,8 +161,6 @@ public class PostController {
                 postService.getQueryWrapper(postQueryRequest));
         return ResultUtils.success(postService.getPostVOPage(postPage, request));
     }
-
-    // endregion
 
     /**
      * 分页搜索（从 ES 查询，封装类）

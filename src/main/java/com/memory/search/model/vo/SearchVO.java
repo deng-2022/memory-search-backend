@@ -1,10 +1,10 @@
 package com.memory.search.model.vo;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.memory.search.model.entity.Picture;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author 邓哈哈
@@ -17,22 +17,22 @@ public class SearchVO implements Serializable {
     /**
      * 博文搜索列表
      */
-    private List<ArticleVO> articleList;
+    private Page<ArticleVO> articleVOPage;
 
     /**
      * 诗词搜索列表
      */
-    private List<PostVO> postVOList;
+    private Page<PostVO> postVOPage;
 
     /**
      * 图片搜索列表
      */
-    private List<Picture> pictureList;
+    private Page<Picture> picturePage;
 
     /**
      * 聚合搜索结果列表
      */
-    private List<?> dataList;
+    private Page<?> dataPage;
 
     private static final long serialVersionUID = 1L;
 }

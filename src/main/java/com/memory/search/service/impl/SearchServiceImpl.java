@@ -6,6 +6,7 @@ import com.memory.search.common.ErrorCode;
 import com.memory.search.dataSource.*;
 import com.memory.search.exception.ThrowUtils;
 import com.memory.search.model.dto.article.ArticleEsDTO;
+import com.memory.search.model.dto.message.MessageTest;
 import com.memory.search.model.dto.search.SearchQueryRequest;
 import com.memory.search.model.entity.Message;
 import com.memory.search.model.entity.Picture;
@@ -16,10 +17,19 @@ import com.memory.search.model.vo.PostVO;
 import com.memory.search.model.vo.SearchVO;
 import com.memory.search.service.SearchService;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.elasticsearch.core.ElasticsearchAggregations;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -59,7 +69,7 @@ public class SearchServiceImpl implements SearchService {
     private RedisTemplate<String, String> redisTemplate;
 
     // 定义 Redis 键的模板
-    private static final String REDIS_KEY_TEMPLATE = "search:text:%s";
+    private static final String SEARCH_TEXT_KEY = "search:text:%s";
     private static final String SEARCH_TIME = "2024/02";
 
     // 定义 Redis 中存储的 Message 对象的字段
@@ -77,6 +87,7 @@ public class SearchServiceImpl implements SearchService {
         NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withSuggestBuilder(suggestBuilder)
                 .build();
+
         // 执行搜索
         SearchHits<ArticleEsDTO> searchHits = elasticsearchRestTemplate.search(searchQuery, ArticleEsDTO.class);
 
@@ -105,6 +116,63 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
+    public List<String> getPopularTopic() {
+
+        // 创建BoolQueryBuilder
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+
+        // 添加聚合条件
+        TermsAggregationBuilder search_terms = AggregationBuilders.terms("search_terms").field("message").size(10);
+
+        // 创建查询
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withAggregations(search_terms)   // 添加聚合条件
+                .build();
+
+        // 执行搜索，获取搜索结果
+        SearchHits<MessageTest> searchHits = elasticsearchRestTemplate.search(searchQuery, MessageTest.class);
+
+        // 获取Spring Data Elasticsearch的聚合结果
+        ElasticsearchAggregations searchHitsAggregations = (ElasticsearchAggregations) searchHits.getAggregations();
+        Aggregations aggregations = Objects.requireNonNull(searchHitsAggregations).aggregations();
+        List<Aggregation> aggregationList = aggregations.asList();
+        for (Aggregation aggregation : aggregationList) {
+            System.out.println(aggregation);
+            aggregation.getName();
+            // 检查聚合类型并转换为相应的聚合对象
+            if (aggregation instanceof Terms) {
+                Terms termsAggregation = (Terms) aggregation;
+
+                // 获取buckets
+                List<? extends Terms.Bucket> buckets = termsAggregation.getBuckets();
+
+                // 遍历buckets
+                for (Terms.Bucket bucket : buckets) {
+                    System.out.println("Bucket Key: " + bucket.getKeyAsString());
+                    System.out.println("Bucket Doc Count: " + bucket.getDocCount());
+                    // 如果需要，还可以获取其他bucket信息，如聚合的子聚合等
+                }
+            }
+        }
+
+
+
+        List<SearchHit<MessageTest>> searchHitsSearchHits = searchHits.getSearchHits();
+        System.out.println(searchHitsSearchHits);
+
+        System.out.println(// 获取聚合结果
+                Objects.requireNonNull(searchHits.getAggregations()).aggregations());
+        System.out.println("--------------------------------");
+        System.out.println();
+
+        // 获取聚合结果
+
+
+
+        return null;
+    }
+
+    @Override
     public List<Message> setHotWords(String searchTextStr, HttpServletRequest request) {
         // 获取当前登录用户
         // User loginUser = (User) request.getSession().getAttribute(USER_LOGIN_STATE);
@@ -122,7 +190,7 @@ public class SearchServiceImpl implements SearchService {
         for (String searchText : searchTexts) {
             // 从 Redis 中获取原始消息
             Long size = redisTemplate.opsForZSet()
-                    .zCard(String.format(REDIS_KEY_TEMPLATE, SEARCH_TIME));
+                    .zCard(String.format(SEARCH_TEXT_KEY, SEARCH_TIME));
 
             Message message = null;
             Gson gson = new Gson();
@@ -132,7 +200,7 @@ public class SearchServiceImpl implements SearchService {
                 message = new Message(MESSAGE_ID, searchText);
                 // 存入 Redis，更新 score
                 redisTemplate.opsForZSet()
-                        .incrementScore(String.format(REDIS_KEY_TEMPLATE, SEARCH_TIME), gson.toJson(message), 1);
+                        .incrementScore(String.format(SEARCH_TEXT_KEY, SEARCH_TIME), gson.toJson(message), 1);
 
             } else {
                 // 创建新的 Message 对象
@@ -140,7 +208,7 @@ public class SearchServiceImpl implements SearchService {
 
                 // 将新的 Message 对象存回 Redis 中
                 redisTemplate.opsForZSet()
-                        .add(String.format(REDIS_KEY_TEMPLATE, SEARCH_TIME), gson.toJson(message), SEARCH_NUM);
+                        .add(String.format(SEARCH_TEXT_KEY, SEARCH_TIME), gson.toJson(message), SEARCH_NUM);
             }
             boolean add = messageList.add(message);
             ThrowUtils.throwIf(!add, ErrorCode.OPERATION_ERROR, "记录热搜词失败");
@@ -153,7 +221,7 @@ public class SearchServiceImpl implements SearchService {
     public List<MessageVO> getHotWords() {
         // 根据 score 获取前十条搜索词条
         Set<String> messageSet = redisTemplate.opsForZSet()
-                .range(String.format(REDIS_KEY_TEMPLATE, SEARCH_TIME), 0, 9);
+                .reverseRange(String.format(SEARCH_TEXT_KEY, SEARCH_TIME), 0, 9);
 
         ArrayList<MessageVO> messageVOList = new ArrayList<>();
         Gson gson = new Gson();
@@ -161,7 +229,7 @@ public class SearchServiceImpl implements SearchService {
             Message message = gson.fromJson(messageStr, Message.class);
             // 查询搜索词条对应 score
             Double score = redisTemplate.opsForZSet()
-                    .score(String.format(REDIS_KEY_TEMPLATE, SEARCH_TIME), messageStr);
+                    .score(String.format(SEARCH_TEXT_KEY, SEARCH_TIME), messageStr);
             // 封装 messageVO
             MessageVO messageVO = new MessageVO();
             BeanUtils.copyProperties(message, messageVO);
@@ -204,7 +272,6 @@ public class SearchServiceImpl implements SearchService {
             CompletableFuture<Page<Picture>> pictureTask = CompletableFuture.supplyAsync(() ->
                     pictureDataSource.search(searchText, pageSize, current));
 
-
             CompletableFuture.allOf(postTask, pictureTask, articleTask).join();
 
             try {
@@ -213,9 +280,13 @@ public class SearchServiceImpl implements SearchService {
                 Page<ArticleVO> articlePage = articleTask.get();
 
                 searchVO = new SearchVO();
-                searchVO.setPostVOList(postVOPage.getRecords());
-                searchVO.setPictureList(picturePage.getRecords());
-                searchVO.setArticleList(articlePage.getRecords());
+                // searchVO.setPostVOList(postVOPage.getRecords());
+                // searchVO.setPictureList(picturePage.getRecords());
+                // searchVO.setArticleList(articlePage.getRecords());
+
+                searchVO.setPostVOPage(postVOPage);
+                searchVO.setArticleVOPage(articlePage);
+                searchVO.setPicturePage(picturePage);
 
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
@@ -226,7 +297,7 @@ public class SearchServiceImpl implements SearchService {
             DataSource<?> dataSourceByType = dataSourceRegistry.getDataSourceByType(type);
             try {
                 Page<?> page = dataSourceByType.search(searchText, pageSize, current);
-                searchVO.setDataList(page.getRecords());
+                searchVO.setDataPage(page);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

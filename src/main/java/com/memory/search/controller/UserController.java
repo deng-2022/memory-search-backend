@@ -212,8 +212,10 @@ public class UserController {
             HttpServletRequest request) {
         long current = userQueryRequest.getPageNum();
         long size = userQueryRequest.getPageSize();
+
         Page<User> userPage = userService.page(new Page<>(current, size),
                 userService.getQueryWrapper(userQueryRequest));
+
         return ResultUtils.success(userPage);
     }
 

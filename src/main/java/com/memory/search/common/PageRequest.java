@@ -18,7 +18,7 @@ public class PageRequest {
     /**
      * 页面大小
      */
-    private long pageSize = 30;
+    private long pageSize = 20;
 
     /**
      * 排序字段

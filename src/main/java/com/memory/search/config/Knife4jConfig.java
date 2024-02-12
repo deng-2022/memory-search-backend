@@ -12,8 +12,8 @@ import springfox.documentation.spring.web.plugins.Docket;
  * Knife4j 接口文档配置
  * https://doc.xiaominfo.com/knife4j/documentation/get_start.html
  *
- * @author <a href="https://github.com/liyupi">程序员鱼皮</a>
- * @from <a href="https://yupi.icu">编程导航知识星球</a>
+ * @author <a href="https://gitee.com/deng-2022">回忆如初</a>
+ * @from <a href="https://deng-2022.gitee.io/blog/">Memory's Blog</a>
  */
 // @Configuration
 @Profile({"dev", "test"})

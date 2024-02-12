@@ -31,6 +31,11 @@ public class ArticleVO {
     private String description;
 
     /**
+     * 作者id
+     */
+    private Long userId;
+
+    /**
      * 文章内容
      */
     private String content;
